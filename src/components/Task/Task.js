@@ -1,25 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import './Task.css';
 
-function Task({data, onTaskDelete}) {
-    let [taskInfo, setTaskInfo] = useState(data);
+function Task({taskInfo, setTasksArray, onTaskDelete}) {
 
     function handleClickComplete(){
-        setTaskInfo(({isComplete}) => {
-            return {
-                ...taskInfo,
-                isComplete: !isComplete
-            }
+        const newTaskData = {
+            ...taskInfo,
+            status: taskInfo.status !== 'active' ? 'active' : 'complete',
+        }
+
+        setTasksArray((tasksData) => {
+            const firstHalfOfData = tasksData.slice(0, tasksData.indexOf(taskInfo))
+            const secondHalfOfData = tasksData.slice(tasksData.indexOf(taskInfo) + 1)
+            return [
+                ...firstHalfOfData,
+                newTaskData,
+                ...secondHalfOfData
+            ]
         })
     }
 
     function handleClickDelete(){
-        onTaskDelete(taskInfo.id)
+        onTaskDelete(taskInfo)
     }
 
     return (
-        <li className={`task ${taskInfo.isComplete ? 'complete' : 'active'}`}>
+        <li className={`task ${taskInfo.status}`}>
             <div className="view">
                 <input className="toggle" type="checkbox" onClick={handleClickComplete}/>
                 <label>
