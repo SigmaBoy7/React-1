@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import './App.css';
 import NewTaskForm from '../NewTaskForm';
@@ -11,34 +11,37 @@ function App() {
       id: 1,
       description: 'Completed task',
       status: 'active',
+      creationTime: 'Wed May 20 2024 19:39:25 GMT+0500',
     },
     {
       id: 2,
       description: 'Editing task',
       status: 'active',
+      creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
     },
     {
       id: 3,
       description: 'Active task',
       status: 'complete',
-    }
-  ])
-  const [ tasksFilter, setTasksFilter ] = useState('all'); 
+    },
+  ]);
+  const [tasksFilter, setTasksFilter] = useState('all');
 
   return (
     <div className="todoapp">
       <header>
         <h1>todos</h1>
-        <NewTaskForm tasksArray={tasksArray} setTasksArray={setTasksArray}>
-        </NewTaskForm>
+        <NewTaskForm tasksArray={tasksArray} setTasksArray={setTasksArray}></NewTaskForm>
       </header>
-      <section className='main'>
-        <TaskList selectedFilter={tasksFilter} tasksArray={tasksArray} setTasksArray={setTasksArray}>
-        </TaskList>
+      <section className="main">
+        <TaskList selectedFilter={tasksFilter} tasksArray={tasksArray} setTasksArray={setTasksArray}></TaskList>
       </section>
-      <Footer tasksFilter={tasksFilter} setTasksFilter={setTasksFilter} tasksArray={tasksArray} setTasksArray={setTasksArray}>
-        
-      </Footer>
+      <Footer
+        tasksFilter={tasksFilter}
+        setTasksFilter={setTasksFilter}
+        tasksArray={tasksArray}
+        setTasksArray={setTasksArray}
+      ></Footer>
     </div>
   );
 }
