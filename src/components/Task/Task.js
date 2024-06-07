@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
+import TaskEdit from '../TaskEdit';
 import './Task.css';
 
-function Task({ creationTime, taskInfo, setTasksArray, onTaskDelete }) {
-  const [taskTimeSinceCreation] = useState(() => {
-    return formatDistanceToNow(creationTime);
-  });
+function Task({ taskInfo, setTasksArray, onTaskDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
 
-  function handleClickComplete() {
+  function handleClickComplete(e) {
+    e.stopPropagation();
     const newTaskData = {
       ...taskInfo,
       status: taskInfo.status !== 'active' ? 'active' : 'complete',
@@ -25,15 +25,29 @@ function Task({ creationTime, taskInfo, setTasksArray, onTaskDelete }) {
     onTaskDelete(taskInfo);
   }
 
+  function handleClickEdit() {
+    setIsEditing((prevValue) => !prevValue);
+  }
+
+  const editBlock = isEditing ? (
+    <TaskEdit taskInfo={taskInfo} setTasksArray={setTasksArray} handleClickEdit={handleClickEdit} />
+  ) : null;
+
   return (
-    <li className={`task ${taskInfo.status}`}>
-      <div className="view">
+    <li className={`task ${isEditing ? 'editing' : taskInfo.status}`}>
+      {editBlock}
+      <div className={'view'}>
         <input className="toggle" type="checkbox" onClick={handleClickComplete} />
         <label>
           <span className="description">{taskInfo.description}</span>
-          <span className="created">created {taskTimeSinceCreation} ago</span>
+          <div className="date">
+            <span className="created">Created {formatDistanceToNow(taskInfo.creationTime)} ago</span>
+            {taskInfo.isChanged ? (
+              <span className="created">Changed {formatDistanceToNow(taskInfo.changedTime)} ago</span>
+            ) : null}
+          </div>
         </label>
-        <button className="icon icon-edit"></button>
+        <button className="icon icon-edit" onClick={handleClickEdit}></button>
         <button className="icon icon-destroy" onClick={handleClickDelete}></button>
       </div>
     </li>

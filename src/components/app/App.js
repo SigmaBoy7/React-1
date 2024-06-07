@@ -23,9 +23,20 @@ function App() {
       id: 3,
       description: 'Active task',
       status: 'complete',
+      creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
     },
   ]);
   const [tasksFilter, setTasksFilter] = useState('all');
+
+  function filterTaskArray() {
+    const filteredTaskArray = tasksArray.filter((taskInfo) => tasksFilter === 'all' || taskInfo.status === tasksFilter);
+    return filteredTaskArray;
+  }
+
+  function onTaskDelete(taskInfo) {
+    const filteredTaskList = tasksArray.filter((item) => item.id !== taskInfo.id);
+    setTasksArray(() => filteredTaskList);
+  }
 
   return (
     <div className="todoapp">
@@ -34,7 +45,7 @@ function App() {
         <NewTaskForm tasksArray={tasksArray} setTasksArray={setTasksArray}></NewTaskForm>
       </header>
       <section className="main">
-        <TaskList selectedFilter={tasksFilter} tasksArray={tasksArray} setTasksArray={setTasksArray}></TaskList>
+        <TaskList onTaskDelete={onTaskDelete} tasksArray={filterTaskArray()} setTasksArray={setTasksArray}></TaskList>
       </section>
       <Footer
         tasksFilter={tasksFilter}

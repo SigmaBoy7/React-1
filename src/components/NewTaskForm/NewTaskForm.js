@@ -18,6 +18,7 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
         id: randomId,
         description: formValue,
         status: 'active',
+        creationTime: new Date(),
       };
       setTasksArray((data) => {
         return [...data, newTaskData];
