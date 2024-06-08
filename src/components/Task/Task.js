@@ -39,13 +39,18 @@ function Task({ taskInfo, setTasksArray, onTaskDelete }) {
       <div className={'view'}>
         <input className="toggle" type="checkbox" onClick={handleClickComplete} />
         <label>
-          <span className="description">{taskInfo.description}</span>
-          <div className="date">
+          <span className="title">{taskInfo.description}</span>
+          <span className="description">
+            <button className="icon icon-play"></button>
+            <button className="icon icon-pause"></button>
+            <span className="time"> 12:25</span>
+          </span>
+          <span className="description">
             <span className="created">Created {formatDistanceToNow(taskInfo.creationTime)} ago</span>
             {taskInfo.isChanged ? (
               <span className="created">Changed {formatDistanceToNow(taskInfo.changedTime)} ago</span>
             ) : null}
-          </div>
+          </span>
         </label>
         <button className="icon icon-edit" onClick={handleClickEdit}></button>
         <button className="icon icon-destroy" onClick={handleClickDelete}></button>
