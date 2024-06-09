@@ -9,21 +9,24 @@ function App() {
   const [tasksArray, setTasksArray] = useState([
     {
       id: 1,
-      description: 'Completed task',
+      title: 'Completed task',
       status: 'active',
       creationTime: 'Wed May 20 2024 19:39:25 GMT+0500',
+      timer: '00:00',
     },
     {
       id: 2,
-      description: 'Editing task',
+      title: 'Editing task',
       status: 'active',
       creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
+      timer: '00:00',
     },
     {
       id: 3,
-      description: 'Active task',
+      title: 'Active task',
       status: 'complete',
       creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
+      timer: '00:00',
     },
   ]);
   const [tasksFilter, setTasksFilter] = useState('all');
