@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { React, useState } from 'react';
 
 import './App.css';
 import NewTaskForm from '../NewTaskForm';
@@ -9,24 +9,28 @@ function App() {
   const [tasksArray, setTasksArray] = useState([
     {
       id: 1,
-      description: 'Completed task',
+      title: 'Completed task',
       status: 'active',
       creationTime: 'Wed May 20 2024 19:39:25 GMT+0500',
+      timer: '00:00',
     },
     {
       id: 2,
-      description: 'Editing task',
+      title: 'Editing task',
       status: 'active',
       creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
+      timer: '00:00',
     },
     {
       id: 3,
-      description: 'Active task',
+      title: 'Active task',
       status: 'complete',
       creationTime: 'Wed May 22 2024 19:42:25 GMT+0500',
+      timer: '00:00',
     },
   ]);
   const [tasksFilter, setTasksFilter] = useState('all');
+  const [isTaskChanged, setIsTaskChanged] = useState(false);
 
   function filterTaskArray() {
     const filteredTaskArray = tasksArray.filter((taskInfo) => tasksFilter === 'all' || taskInfo.status === tasksFilter);
@@ -45,7 +49,14 @@ function App() {
         <NewTaskForm tasksArray={tasksArray} setTasksArray={setTasksArray}></NewTaskForm>
       </header>
       <section className="main">
-        <TaskList onTaskDelete={onTaskDelete} tasksArray={filterTaskArray()} setTasksArray={setTasksArray}></TaskList>
+        <TaskList
+          setIsTaskChanged={setIsTaskChanged}
+          isTaskChanged={isTaskChanged}
+          tasksFilter={tasksFilter}
+          onTaskDelete={onTaskDelete}
+          tasksArray={filterTaskArray()}
+          setTasksArray={setTasksArray}
+        ></TaskList>
       </section>
       <Footer
         tasksFilter={tasksFilter}
