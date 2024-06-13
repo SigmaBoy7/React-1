@@ -30,7 +30,13 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
   }
 
   function handleSecInput(e) {
-    const { value } = e.target;
+    let { value } = e.target;
+
+    if (value > 59) {
+      value = 59;
+      e.target = 59;
+    }
+
     setFormValue((prevValue) => ({
       ...prevValue,
       timer: {

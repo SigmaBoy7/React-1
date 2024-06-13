@@ -1,8 +1,10 @@
-import { React, useState } from 'react';
+import { React, useState, useRef, useEffect } from 'react';
 
-function TaskEdit({ taskInfo, setTasksArray, handleClickEdit }) {
+function TaskEdit({ taskInfo, setTasksArray, handleClickEdit, setIsTaskChanged }) {
+  const formRef = useRef(null);
+
   const [formValue, setFormValue] = useState({
-    title: '',
+    title: taskInfo.title,
     timer: {
       min: '',
       sec: '',
@@ -60,6 +62,7 @@ function TaskEdit({ taskInfo, setTasksArray, handleClickEdit }) {
           sec: '',
         },
       });
+      setIsTaskChanged(() => true);
       handleClickEdit();
     }
   }
@@ -70,23 +73,40 @@ function TaskEdit({ taskInfo, setTasksArray, handleClickEdit }) {
     }
   }
 
+  const handleClickOutside = (e) => {
+    if (formRef.current && !formRef.current.contains(e.target)) {
+      handleClickEdit();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   return (
-    <form onBlur={handleClickEdit} className="new-todo-form" onKeyDown={handleFormKeyDown}>
-      <input className="new-todo" placeholder="Task" autoFocus value={formValue.title} onChange={handleTitleInput} />
-      <input
-        type="number"
-        onChange={handleMinInput}
-        value={formValue.timer.min}
-        className="new-todo-form__timer"
-        placeholder="Min"
-      />
-      <input
-        type="number"
-        onChange={handleSecInput}
-        value={formValue.timer.sec}
-        className="new-todo-form__timer"
-        placeholder="Sec"
-      />
+    <form ref={formRef} className="new-todo-form" onKeyDown={handleFormKeyDown}>
+      <input className="new-todo" placeholder="Task" value={formValue.title} onChange={handleTitleInput} />
+      {taskInfo.timer !== '00:00' ? (
+        <>
+          <input
+            type="number"
+            onChange={handleMinInput}
+            value={formValue.timer.min}
+            className="new-todo-form__timer"
+            placeholder="Min"
+          />
+          <input
+            type="number"
+            onChange={handleSecInput}
+            value={formValue.timer.sec}
+            className="new-todo-form__timer"
+            placeholder="Sec"
+          />
+        </>
+      ) : null}
     </form>
   );
 }

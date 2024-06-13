@@ -4,19 +4,20 @@ import { formatDistanceToNow } from 'date-fns';
 import TaskEdit from '../TaskEdit';
 import './Task.css';
 
-function Task({ taskInfo, setTasksArray, onTaskDelete }) {
+function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChanged, setIsTaskChanged }) {
   const [isEditing, setIsEditing] = useState(false);
+
   const [timer, setTimer] = useState(taskInfo.timer);
   const [isRunning, setIsRunning] = useState(false);
   const isTabHidden = document.hidden;
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        localStorage.setItem('timer', timer);
+      if (document.hidden && taskInfo.timer !== '00:00') {
+        localStorage.setItem(`timer ${taskInfo.id}`, timer);
         setIsRunning(false);
       } else {
-        const savedTimer = localStorage.getItem('timer');
+        const savedTimer = localStorage.getItem(`timer ${taskInfo.id}`);
         if (savedTimer) {
           setTimer(savedTimer);
         }
@@ -29,6 +30,27 @@ function Task({ taskInfo, setTasksArray, onTaskDelete }) {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
+  }, [timer]);
+
+  useEffect(() => {
+    setTimer(() => taskInfo.timer);
+    setIsTaskChanged(() => false);
+  }, [isTaskChanged]);
+
+  useEffect(() => {
+    if (taskInfo.timer !== '00:00') {
+      const savedTimer = localStorage.getItem(`timer ${taskInfo.id}`);
+      if (savedTimer) {
+        setTimer(savedTimer);
+      }
+    }
+  }, [tasksFilter]);
+
+  useEffect(() => {
+    if (taskInfo.timer !== '00:00') {
+      localStorage.setItem(`timer ${taskInfo.id}`, timer);
+      localStorage.setItem(`lastTimeSaved ${taskInfo.id}`, new Date());
+    }
   }, [timer]);
 
   useEffect(() => {
@@ -47,11 +69,12 @@ function Task({ taskInfo, setTasksArray, onTaskDelete }) {
         }
       }, 1000);
     }
-    return () => clearTimeout(timerId);
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [isRunning, timer, isTabHidden]);
 
-  function handleClickComplete(e) {
-    e.stopPropagation();
+  function handleClickComplete() {
     const newTaskData = {
       ...taskInfo,
       status: taskInfo.status !== 'active' ? 'active' : 'complete',
@@ -81,7 +104,12 @@ function Task({ taskInfo, setTasksArray, onTaskDelete }) {
   }
 
   const editBlock = isEditing ? (
-    <TaskEdit taskInfo={taskInfo} setTasksArray={setTasksArray} handleClickEdit={handleClickEdit} />
+    <TaskEdit
+      setIsTaskChanged={setIsTaskChanged}
+      taskInfo={taskInfo}
+      setTasksArray={setTasksArray}
+      handleClickEdit={handleClickEdit}
+    />
   ) : null;
 
   const taskTimer =
@@ -97,15 +125,17 @@ function Task({ taskInfo, setTasksArray, onTaskDelete }) {
     <li className={`task ${isEditing ? 'editing' : taskInfo.status}`}>
       {editBlock}
       <div className={'view'}>
-        <input className="toggle" type="checkbox" onClick={handleClickComplete} />
+        <input
+          checked={taskInfo.status === 'complete' ? true : false}
+          className="toggle"
+          type="checkbox"
+          onChange={handleClickComplete}
+        />
         <div className="task-body">
           <span className="title">{taskInfo.title}</span>
           <span className="description"> {taskTimer}</span>
           <span className="description dates">
             <span className="created">Created {formatDistanceToNow(taskInfo.creationTime)} ago</span>
-            {taskInfo.isChanged ? (
-              <span className="created">Changed {formatDistanceToNow(taskInfo.changedTime)} ago</span>
-            ) : null}
           </span>
         </div>
         <button className="icon icon-edit" onClick={handleClickEdit}></button>
