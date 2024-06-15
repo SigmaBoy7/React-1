@@ -19,7 +19,12 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
   }
 
   function handleMinInput(e) {
-    const { value } = e.target;
+    let { value } = e.target;
+
+    if (value < 0) {
+      value = 0;
+    }
+
     setFormValue((prevValue) => ({
       ...prevValue,
       timer: {
@@ -31,6 +36,10 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
 
   function handleSecInput(e) {
     let { value } = e.target;
+
+    if (value < 0) {
+      value = 0;
+    }
 
     if (value > 59) {
       value = 59;
@@ -49,11 +58,14 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
   function handleFormSubmit(e) {
     e.preventDefault(); // Предотвращаем стандартное поведение формы
     if (formValue.title.trim().length !== 0) {
+      const min = formValue.timer.min.length < 2 ? '0' + formValue.timer.min : formValue.timer.min;
+      const sec = formValue.timer.sec.length < 2 ? '0' + formValue.timer.sec : formValue.timer.sec;
+
       const randomId = tasksArray.length !== 0 ? tasksArray[tasksArray.length - 1].id + 1 : 1;
       const newTaskData = {
         id: randomId,
         title: formValue.title,
-        timer: `${formValue.timer.min ? formValue.timer.min : '00'}:${formValue.timer.sec ? formValue.timer.sec : '00'}`,
+        timer: `${min ? min : '00'}:${sec ? sec : '00'}`,
         status: 'active',
         creationTime: new Date(),
       };
@@ -78,6 +90,7 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
     <div className="new-todo-form" onKeyDown={handleFormKeyDown}>
       <input className="new-todo" placeholder="Task" autoFocus value={formValue.title} onChange={handleTitleInput} />
       <input
+        min={0}
         type="number"
         onChange={handleMinInput}
         value={formValue.timer.min}
@@ -85,6 +98,7 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
         placeholder="Min"
       />
       <input
+        min={0}
         type="number"
         onChange={handleSecInput}
         value={formValue.timer.sec}
