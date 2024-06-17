@@ -15,17 +15,14 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
     const [currentMinutes, currentSeconds] = timer.split(':').map(Number);
     let totalSeconds = currentMinutes * 60 + currentSeconds;
     totalSeconds -= secondsToSubtract;
-
     if (totalSeconds < 0) {
       totalSeconds = 0; // Таймер не может быть отрицательным
     }
 
     const newMinutes = Math.floor(totalSeconds / 60);
     const newSeconds = totalSeconds % 60;
-
     const formattedMinutes = String(newMinutes).padStart(2, '0');
     const formattedSeconds = String(newSeconds).padStart(2, '0');
-
     return `${formattedMinutes}:${formattedSeconds}`;
   }
 
@@ -57,19 +54,25 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
 
   useEffect(() => {
     if (taskInfo.timer !== '00:00') {
-      setIsRunning(true);
       const savedTimer = localStorage.getItem(`lastTimeSaved ${taskInfo.id}`);
       if (savedTimer) {
+        setIsRunning(true);
+
         const currentTime = new Date();
-        const savedTimerDate = new Date(`2024-06-15T${savedTimer}`);
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0, поэтому добавляем 1
+        const day = String(today.getDate()).padStart(2, '0'); // Дни начинаются с 1
+        const savedTimerDate = new Date(`${year}-${month}-${day}T${savedTimer}`);
         const difference = currentTime.getTime() - savedTimerDate.getTime();
         const secondsDifference = Math.floor(difference / 1000);
+        console.log(secondsDifference);
 
         setTimer(subtractSecondsFromTimer(localStorage.getItem(`timer ${taskInfo.id}`), secondsDifference));
       }
     }
   }, [tasksFilter]);
-  console.log(localStorage);
+
   useEffect(() => {
     if (taskInfo.timer !== '00:00') {
       localStorage.setItem(`timer ${taskInfo.id}`, timer);
