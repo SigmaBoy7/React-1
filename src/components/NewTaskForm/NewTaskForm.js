@@ -87,7 +87,7 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
   }
 
   return (
-    <div className="new-todo-form" onKeyDown={handleFormKeyDown}>
+    <form className="new-todo-form" onKeyDown={handleFormKeyDown}>
       <input className="new-todo" placeholder="Task" autoFocus value={formValue.title} onChange={handleTitleInput} />
       <input
         min={0}
@@ -105,7 +105,7 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
         className="new-todo-form__timer"
         placeholder="Sec"
       />
-    </div>
+    </form>
   );
 }
 
