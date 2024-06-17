@@ -74,6 +74,10 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
   }, [tasksFilter]);
 
   useEffect(() => {
+    if (timer === '00:00' && taskInfo.timer !== '00:00') {
+      handleClickComplete();
+    }
+
     if (taskInfo.timer !== '00:00') {
       localStorage.setItem(`timer ${taskInfo.id}`, timer);
     }
