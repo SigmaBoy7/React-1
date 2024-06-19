@@ -2,6 +2,7 @@ import { React, useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 import TaskEdit from '../TaskEdit';
+
 import './Task.css';
 
 function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChanged, setIsTaskChanged }) {
@@ -33,10 +34,26 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
         setIsRunning(false);
       } else {
         const savedTimer = localStorage.getItem(`timer ${taskInfo.id}`);
+        const lastSavedTimer = localStorage.getItem(`lastTimeSaved ${taskInfo.id}`);
         if (savedTimer) {
-          setTimer(savedTimer);
+          const currentTime = new Date();
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0, поэтому добавляем 1
+          const day = String(today.getDate()).padStart(2, '0'); // Дни начинаются с 1
+          const savedTimerDate = new Date(`${year}-${month}-${day}T${lastSavedTimer}`);
+          const difference = currentTime.getTime() - savedTimerDate.getTime();
+          let secondsDifference = Math.floor(difference / 1000);
+
+          if (localStorage.getItem('isRunning') === 'false' || !localStorage.getItem('isRunning')) {
+            secondsDifference = 0;
+          }
+
+          setTimer(subtractSecondsFromTimer(savedTimer, secondsDifference));
+          if (localStorage.getItem('isRunning') === 'true') {
+            setIsRunning(true);
+          }
         }
-        setIsRunning(true);
       }
     };
 
@@ -56,8 +73,6 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
     if (taskInfo.timer !== '00:00') {
       const savedTimer = localStorage.getItem(`lastTimeSaved ${taskInfo.id}`);
       if (savedTimer) {
-        setIsRunning(true);
-
         const currentTime = new Date();
         const today = new Date();
         const year = today.getFullYear();
@@ -65,13 +80,22 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
         const day = String(today.getDate()).padStart(2, '0'); // Дни начинаются с 1
         const savedTimerDate = new Date(`${year}-${month}-${day}T${savedTimer}`);
         const difference = currentTime.getTime() - savedTimerDate.getTime();
-        const secondsDifference = Math.floor(difference / 1000);
-        console.log(secondsDifference);
+        let secondsDifference = Math.floor(difference / 1000);
+
+        if (localStorage.getItem('isRunning') === 'false' || !localStorage.getItem('isRunning')) {
+          secondsDifference = 0;
+        }
 
         setTimer(subtractSecondsFromTimer(localStorage.getItem(`timer ${taskInfo.id}`), secondsDifference));
       }
     }
   }, [tasksFilter]);
+
+  useEffect(() => {
+    if (localStorage.getItem('isRunning') === 'true') {
+      setIsRunning(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (timer === '00:00' && taskInfo.timer !== '00:00') {
@@ -100,6 +124,7 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
           } else {
             const newSec = taskSec === 0 ? 59 : taskSec - 1;
             const newMin = taskSec === 0 ? taskMin - 1 : taskMin;
+
             setTimer(`${String(newMin).padStart(2, '0')}:${String(newSec).padStart(2, '0')}`);
           }
         }, 1000);
@@ -117,6 +142,7 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
     const newTaskData = {
       ...taskInfo,
       status: taskInfo.status !== 'active' ? 'active' : 'complete',
+      timer: '00:00',
     };
 
     setTasksArray((tasksData) => {
@@ -137,12 +163,14 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
   function handleClickStartTimer() {
     setIsRunning(true);
     localStorage.setItem(`lastTimeSaved ${taskInfo.id}`, new Date().toLocaleTimeString());
+    localStorage.setItem('isRunning', true);
   }
 
   function handleClickPauseTimer() {
     setIsRunning(false);
     localStorage.setItem(`timer ${taskInfo.id}`, timer);
     localStorage.setItem(`lastTimeSaved ${taskInfo.id}`, new Date().toLocaleTimeString());
+    localStorage.setItem('isRunning', false);
   }
 
   const editBlock = isEditing ? (
