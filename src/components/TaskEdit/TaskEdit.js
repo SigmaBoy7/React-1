@@ -41,6 +41,7 @@ function TaskEdit({ taskInfo, setTasksArray, handleClickEdit, setIsTaskChanged }
     if (value < 0) {
       value = 0;
     }
+
     setFormValue((prevValue) => ({
       ...prevValue,
       timer: {
@@ -53,8 +54,9 @@ function TaskEdit({ taskInfo, setTasksArray, handleClickEdit, setIsTaskChanged }
   function handleFormSubmit(e) {
     e.preventDefault(); // Предотвращаем стандартное поведение формы
     if (formValue.title.trim().length !== 0) {
-      const min = formValue.timer.min.length < 2 ? '0' + formValue.timer.min : formValue.timer.min;
-      const sec = formValue.timer.sec.length < 2 ? '0' + formValue.timer.sec : formValue.timer.sec;
+      const min = formValue.timer.min.length < 2 ? '00' + formValue.timer.min : formValue.timer.min;
+      const sec = formValue.timer.sec.length < 2 ? '00' + formValue.timer.sec : formValue.timer.sec;
+
       const newTaskData = {
         id: taskInfo.id,
         title: formValue.title,
