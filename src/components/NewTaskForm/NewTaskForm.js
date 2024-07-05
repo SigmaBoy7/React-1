@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 import './NewTaskForm.css';
 
-function NewTaskForm({ tasksArray, setTasksArray }) {
+function NewTaskForm({ setTasksArray }) {
   const [formValue, setFormValue] = useState({
     title: '',
     timer: {
@@ -61,9 +63,8 @@ function NewTaskForm({ tasksArray, setTasksArray }) {
       const min = formValue.timer.min.length < 2 ? '0' + formValue.timer.min : formValue.timer.min;
       const sec = formValue.timer.sec.length < 2 ? '0' + formValue.timer.sec : formValue.timer.sec;
 
-      const randomId = tasksArray.length !== 0 ? tasksArray[tasksArray.length - 1].id + 1 : 1;
       const newTaskData = {
-        id: randomId,
+        id: uuidv4(),
         title: formValue.title,
         timer: `${min ? min : '00'}:${sec ? sec : '00'}`,
         status: 'active',
