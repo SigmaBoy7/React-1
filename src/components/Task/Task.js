@@ -45,12 +45,15 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
           const difference = currentTime.getTime() - savedTimerDate.getTime();
           let secondsDifference = Math.floor(difference / 1000);
 
-          if (localStorage.getItem('isRunning') === 'false' || !localStorage.getItem('isRunning')) {
+          if (
+            localStorage.getItem(`isRunning ${taskInfo.id}`) === 'false' ||
+            !localStorage.getItem(`isRunning ${taskInfo.id}`)
+          ) {
             secondsDifference = 0;
           }
 
           setTimer(subtractSecondsFromTimer(savedTimer, secondsDifference));
-          if (localStorage.getItem('isRunning') === 'true') {
+          if (localStorage.getItem(`isRunning ${taskInfo.id}`) === 'true') {
             setIsRunning(true);
           }
         }
@@ -82,7 +85,10 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
         const difference = currentTime.getTime() - savedTimerDate.getTime();
         let secondsDifference = Math.floor(difference / 1000);
 
-        if (localStorage.getItem('isRunning') === 'false' || !localStorage.getItem('isRunning')) {
+        if (
+          localStorage.getItem(`isRunning ${taskInfo.id}`) === 'false' ||
+          !localStorage.getItem(`isRunning ${taskInfo.id}`)
+        ) {
           secondsDifference = 0;
         }
 
@@ -92,7 +98,7 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
   }, [tasksFilter]);
 
   useEffect(() => {
-    if (localStorage.getItem('isRunning') === 'true') {
+    if (localStorage.getItem(`isRunning ${taskInfo.id}`) === 'true') {
       setIsRunning(true);
     }
   }, []);
@@ -163,14 +169,14 @@ function Task({ taskInfo, setTasksArray, onTaskDelete, tasksFilter, isTaskChange
   function handleClickStartTimer() {
     setIsRunning(true);
     localStorage.setItem(`lastTimeSaved ${taskInfo.id}`, new Date().toLocaleTimeString());
-    localStorage.setItem('isRunning', true);
+    localStorage.setItem(`isRunning ${taskInfo.id}`, true);
   }
 
   function handleClickPauseTimer() {
     setIsRunning(false);
     localStorage.setItem(`timer ${taskInfo.id}`, timer);
     localStorage.setItem(`lastTimeSaved ${taskInfo.id}`, new Date().toLocaleTimeString());
-    localStorage.setItem('isRunning', false);
+    localStorage.setItem(`isRunning ${taskInfo.id}`, false);
   }
 
   const editBlock = isEditing ? (
